@@ -11,6 +11,10 @@ export class BookRepository{
         return null;
     }
     async addBook(book: book){
+        await this.db.run(
+            "INSERT INTO book (book_id, book_title, author, genre) VALUES (?;?;?;?);",
+            book.bookId, book.book_title, book.author, book.genre
+        )
         
     }
     async updateBook (BookID: number, book_title: string, author: string, genre:string){
