@@ -13,6 +13,39 @@ export  class PersonRepository{
         companyLike: string,
         addressLike: string
     ): Promise<person[]>{
+
+        const params: string[] = [];
+        let q = "SELECT id, first_name, last_name, company, address FROM person 1=1;"
+        
+
+        if (firstNameLike) {
+            q += "AND first_name LIKE ? "
+            params.push(firstNameLike)
+        }
+        if (lastNameLike) {
+            q += "AND last_name LIKE ? "
+            params.push(lastNameLike)
+        }
+        if (companyLike) {
+            q += "AND company LIKE ? "
+            params.push(companyLike)
+        }
+        if (addressLike) {
+            q += "AND address LIKE ? "
+            params.push(addressLike)
+        }
+
+        const records = await this.db.all(q,...params)
+
+        return records.map((record): person => {
+            return {
+                id: record.id,
+                firstName: record.first_name,
+                lastName: record.last_name,
+                company:record.company,
+                address: record.address
+            }
+        })
         return null
     }
     async addPerson(person:person): Promise<number>{
@@ -25,6 +58,7 @@ export  class PersonRepository{
     async updatePerson(personID:number,person: person): Promise< boolean>{
         return null
     }
+    
     async deletePerson(personID:number){
 
     }

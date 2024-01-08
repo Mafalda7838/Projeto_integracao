@@ -8,6 +8,23 @@ export class BookRepository{
     }
 
     async findBook(personID:number): Promise<book[]> {
+        
+        const records = await this.db.all(
+            "SELECT book_id, book_title, author, genre FROM book WHERE book_id = ?; "
+            
+        );
+
+        return records.map((record): book =>{
+            return {
+                bookId: record.book_id,
+                book_title: record.book_title,
+                author: record.author,
+                genre: record.genre
+            }
+        })
+
+
+
         return null;
     }
     async addBook(book: book){
@@ -21,10 +38,12 @@ export class BookRepository{
 
     }
 
-    //async deleteBook (personId: number, type: string){
+    async deleteBook (personId: number, type: string){
 
-   // }
-    //async deleteBook (BookID: number){
+        await this.db.run(
+            "DELETE FROM book WHERE person_id = ?; ", personId
+        )
 
-    //}
+    }
+    
 }

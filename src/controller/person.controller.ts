@@ -19,10 +19,42 @@ export class PersonController {
     }
 
     findPersons() : Handler {
-        return (req: Request, res: Response)=>{
+
+        const completePersonWithDetails = async (person: person): Promise<DetailedPerson> =>{
+            const result: DetailedPerson = {
+                ...person,
+                book:[]
+            
+            }
+            const book = await this.bookRepository.findBook(person.id)
+
+            book.forEach(book => {
+                result.book.push({
+                    bookId: book.bookId,
+                    book_title: book.book_title,
+                    author: book.author,
+                    genre: book.genre,
+                })
+            })
+            return result
+        }
+        return async(req: Request, res: Response)=>{
+
+            const {firstName, lastName, company, address}
+
             const person = await this.personRepository.findPersons(
-                null,null,null,null
+                <string>firstName,
+                <string>lastName,
+                <string>company,
+                <string>address,
             )
+            const result: DetailedPerson[] = []
+            for (const person of person){
+                const DetailedPerson = await completePersonWithDetails(person)
+                result.push(DetailedPerson)
+
+
+            }
                 res.status(200).json(person)
         }
 
@@ -54,6 +86,12 @@ export class PersonController {
 
     deletePersons() : Handler {
         return (req: Request, res: Response) => {
+            const personId= parseInt(req.params.personId)
+
+            await this.bookRepository.deletebook(personId);
+            await this.personRepository.deletePerson(personId)
+
+            res.status(200).json()
             
         }
 
