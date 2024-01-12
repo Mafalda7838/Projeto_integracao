@@ -10,15 +10,15 @@ export class BookRepository{
     async findBook(personID:number): Promise<book[]> {
         
         const records = await this.db.all(
-            "SELECT book_id, book_title, author, genre FROM book WHERE book_id = ?; "
+            "SELECT book_id, person_id ,book_title, genre FROM book WHERE book_id = ?; "
             
         );
 
         return records.map((record): book =>{
             return {
                 bookId: record.book_id,
+                personId: record.person_id,
                 book_title: record.book_title,
-                author: record.author,
                 genre: record.genre
             }
         })
@@ -29,23 +29,23 @@ export class BookRepository{
     }
     async addBook(book: book){
         await this.db.run(
-            "INSERT INTO book (book_id, book_title, author, genre) VALUES (?;?;?;?);",
-            book.bookId, book.book_title, book.author, book.genre
+            "INSERT INTO book (book_id, personId, book_title, genre) VALUES (?;?;?;?);",
+            book.bookId, book.personId, book.book_title, book.genre
         )
         
     
 
     }
-    async updateBook (BookID: number, book_title: string, author: string, genre:string){
+    async updateBook (BookID: number, personId:number, book_title: string, genre:string){
         const result= await this.db.run(
-            "UPDATE book SET book_title = ?, author = ?, genre = ? WHERE id = ?",
-            book_title, author, genre
+            "UPDATE book SET book_title = ?,personId =?, genre = ? WHERE id = ?",
+            book_title, personId, genre
         )
         return !!result.changes
     }
 
 
-    async deleteBook (personId: number, type: string){
+    async deleteBook (personId: number){
 
         await this.db.run(
             "DELETE FROM book WHERE person_id = ?; ", personId

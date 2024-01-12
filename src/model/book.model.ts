@@ -1,6 +1,6 @@
 export interface book {
     bookId?:number
+    personId:number
     book_title: string
-    author:string
     genre: string
 }
