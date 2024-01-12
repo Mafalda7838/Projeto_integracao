@@ -33,17 +33,24 @@ export class BookRepository{
             book.bookId, book.book_title, book.author, book.genre
         )
         
-    }
-    async updateBook (BookID: number, book_title: string, author: string, genre:string){
+    
 
     }
+    async updateBook (BookID: number, book_title: string, author: string, genre:string){
+        const result= await this.db.run(
+            "UPDATE book SET book_title = ?, author = ?, genre = ? WHERE id = ?",
+            book_title, author, genre
+        )
+        return !!result.changes
+    }
+
 
     async deleteBook (personId: number, type: string){
 
         await this.db.run(
             "DELETE FROM book WHERE person_id = ?; ", personId
         )
-
+                
     }
     
 }

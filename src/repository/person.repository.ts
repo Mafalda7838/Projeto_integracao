@@ -55,12 +55,18 @@ export  class PersonRepository{
         )
         return result.lastID
     }
-    async updatePerson(personID:number,person: person): Promise< boolean>{
-        return null
+    async updatePerson(personID:number,{firstName,lastName, company, address}: person): Promise< boolean>{
+        const result = await this.db.run(
+            "UPDATE person SET first_name = ?, last_name= ?, company = ?, address = ? WHERE id = ?", 
+            firstName, lastName, company, address, personID
+        )
+        return !!result.changes
     }
     
     async deletePerson(personID:number){
-
+        await this.db.run(
+            "DELETE FROM person WHERE id = ?", personID
+        );
     }
 
 

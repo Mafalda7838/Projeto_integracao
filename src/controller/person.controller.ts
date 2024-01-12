@@ -79,6 +79,34 @@ export class PersonController {
     }
     updatePerson() : Handler {
         return (req: Request, res: Response) =>{
+            const personId = parseInt(req.params.personId)
+
+            const person: DetailedPerson = req.body
+            await this.personRepository.updatePerson(personId,person)
+            const dbBook = await this .bookRepository.findBook(personId)
+            const requestBook = person.Book
+
+            // adicionar e fazer update
+            requestBook.forEach(async(requestBook) =>{
+                const dbBook = dbBook.find(
+                    (dbBook)=> requestBook.book_title == dbBook.book_title
+                )
+
+                if(!dbBook){
+                    //nao existe na db, adicionar 
+                    console.log (`Adding ${personId} - ${requestBook.book_title} with ${requestBook.author}`)
+                    await this.bookRepository.addBook({
+                        ...bookId,
+                        personId : personId
+                    }) 
+                } else if (dbBook.author != requestBook.author){
+                    //foi atualizado, fazer update ao registro
+                    console.log( `Updating ${personId} - ${dbBook.book_title} to ${requestBook.book_title}`)
+                    await this.bookRepository.updateBook(
+                        personId, dbBook.book_title, requestBook.author
+                    )
+                }
+            })
             
         }
 
@@ -88,7 +116,7 @@ export class PersonController {
         return (req: Request, res: Response) => {
             const personId= parseInt(req.params.personId)
 
-            await this.bookRepository.deletebook(personId);
+            await this.bookRepository.deleteBook(personId);
             await this.personRepository.deletePerson(personId)
 
             res.status(200).json()
